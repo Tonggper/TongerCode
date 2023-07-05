@@ -1,0 +1,206 @@
+finish
+/clear,all
+/prep7
+
+! 定义单元与材料特性
+et, 1, solid45
+et, 2, conta173
+et, 3, targe170
+mp, ex, 1, 2.1e11
+mp, prxy, 1, 0.3
+tb, bkin, 1
+tbdata, 1, 2.35e8
+tbplot
+
+mp, mu, 2, 0.2
+
+mp, ex, 3, 2.1e11
+mp, prxy, 3, 0.3
+tb, bkin, 3
+tbdata, 1, 9e8
+tbplot
+
+! 建立T梁
+K, 1, 0.23, 0, 0
+K, 2, 0.23, 0.2, 0
+K, 3, 0.1, 0.4, 0
+K, 4, 0.1, 0.6, 0
+K, 5, -0.1, 0.6, 0
+K, 6, -0.1, 0.4, 0
+K, 7, -0.23, 0.2, 0
+K, 8, -0.23, 0, 0
+A, 1, 2, 3, 4, 5, 6, 7, 8
+K, 9, 0.23, 0, -2
+L, 1, 9
+VDRAG, 1, , , , , , 9
+cm,Tbeam,volume
+
+
+! 建立梁侧钢板
+vsel,none
+x_1=0.012
+y_1=0.36+0.1
+z_1=-0.7
+BLC4,0.23,-0.16-0.1,x_1,y_1,z_1
+cm,G_ce,volume
+
+
+! 建立梁侧底钢板
+vsel,none
+x_2=0.33
+y_2=0.012
+z_2=-0.7
+BLC4,0.23+x_1,-0.16,x_2,y_2,z_2
+cm,G_di,volume
+
+
+! 建立梁侧加劲板
+vsel,none
+x_3=0.33
+Z_3=0.012  ! 厚度
+
+K, 100, 0.23+x_1, -0.16+y_2, -0.05
+K, 101, 0.23+x_1, 0.2, -0.05
+K, 102, 0.23+x_1+0.03, 0.2, -0.05
+K, 103, 0.23+x_1+x_3, 0.04, -0.05
+K, 104, 0.23+x_1+x_3, -0.16+y_2, -0.05
+A, 100, 101,  102,  103,  104
+K, 105, 0.23+x_1, -0.16+y_2, -0.05-Z_3
+L, 100, 105
+VDRAG, 23, , , , , , 55
+cm,G_jiajingban1,volume
+VGEN, 5, G_jiajingban1, , , , ,-0.15
+cm,G_jiajingban,volume
+
+
+! 建立梁底从下往上第一排高强螺栓
+vsel,none
+WPROTA, , ,90
+WPOFFS, , ,0.1+0.23
+CYL4, 0.05, -0.16-0.1/2, 0.032/2, , , , -(0.46+0.012*2+0.1*2)
+cm,LuoShuan1,volume
+VGEN, 5, LuoShuan1, , , , ,-0.15
+cm,LuoShuan11,volume
+
+! 建立梁底从下往上第二排高强螺栓
+vsel,none
+CYL4, 0.05+0.15/2, -0.032/2, 0.032/2, , , , -(0.46+0.012*2+0.1*2)
+cm,LuoShuan2,volume
+VGEN, 4, LuoShuan2, , , , ,-0.15
+cm,LuoShuan21,volume
+
+! 建立梁底从下往上第三排高强螺栓
+vsel,none
+CYL4, 0.125, 0.15, 0.032/2, , , , -(0.15+0.012+0.1)
+cm,LuoShuan3,volume
+VGEN, 4, LuoShuan3, , , , ,-0.15
+cm,LuoShuan31,volume
+
+Vsel, s, , ,LuoShuan11
+Vsel, a, , ,LuoShuan21
+Vsel, a, , ,LuoShuan31
+cm, LuoShuan, volume
+
+allsel,all
+vsbv, G_ce, LuoShuan !布尔减运算形成螺栓孔
+
+! 建立梁底从下往上第三排高强螺栓
+vsel,none
+CYL4, 0.125, 0.15, 0.032/2, , , , -(0.15+0.012+0.1)
+cm,LuoShuan3,volume
+VGEN, 4, LuoShuan3, , , , ,-0.15
+cm,LuoShuan31,volume
+Vsymm,x,LuoShuan31
+cm,LuoShuan311,volume
+
+allsel,all
+vsbv, Tbeam, LuoShuan311 !布尔减运算形成T梁内锚孔
+
+!生成螺栓模型
+!从下往上第一层
+vsel,none
+CYL4, 0.05, -0.16-0.1/2, 0.032/2, , , , -(0.46+0.012*2+0.1*2)
+cm,LuoShuan1,volume
+VGEN, 5, LuoShuan1, , , , ,-0.15
+cm,LuoShuan11,volume
+
+!从下往上第二层
+vsel,none
+CYL4, 0.05+0.15/2, -0.032/2, 0.032/2, , , , -(0.46+0.012*2+0.1*2)
+cm,LuoShuan2,volume
+VGEN, 4, LuoShuan2, , , , ,-0.15
+cm,LuoShuan21,volume
+
+!从下往上第三层
+vsel,none
+CYL4, 0.125, 0.15, 0.032/2, , , , -(0.15+0.012+0.1)
+cm,LuoShuan3,volume
+VGEN, 4, LuoShuan3, , , , ,-0.15
+cm,LuoShuan31,volume
+Vsymm,x,LuoShuan31
+cm,LuoShuan311,volume
+
+
+allsel
+Vsel,u,loc,x,0
+Vsel,u, , ,LuoShuan11
+Vsel,u, , ,LuoShuan21
+Vsel,u, , ,LuoShuan311
+cm,ZXK1,volume
+Vsymm,x,ZXK1
+cm,ZXK,volume
+
+!生成螺母
+!从下往上第一层
+vsel,none
+WPOFFS, , ,-0.05
+CYL4, 0.05, -0.16-0.1/2, 0.032/2, , 0.05/2, , -0.05+0.012
+cm,Luomu1,volume
+VGEN, 5, Luomu1, , , , ,-0.15
+cm,Luomu11,volume
+Vsymm,x,Luomu11
+cm,Luomu111,volume
+
+!从下往上第二层
+vsel,none
+CYL4, 0.05+0.15/2, -0.032/2, 0.032/2, , 0.05/2, , -0.05+0.012
+cm,Luomu2,volume
+VGEN, 4, Luomu2, , , , ,-0.15
+cm,Luomu21,volume
+Vsymm,x,Luomu21
+cm,Luomu211,volume
+
+!从下往上第三层
+vsel,none
+CYL4, 0.125, 0.15, 0.032/2, , 0.05/2, , -0.05+0.012
+cm,Luomu3,volume
+VGEN, 4, Luomu3, , , , ,-0.15
+cm,Luomu31,volume
+Vsymm,x,Luomu31
+cm,Luomu311,volume
+
+!Vsel,s, , ,ZXK1
+!VGLUE,all
+
+!建立转向管
+vsel,none
+WPOFFS, , ,-0.05+0.22
+K,1001,0.23+0.22,-0.16+0.05,-0.7
+K,1002,0.23+0.22,-0.16+0.05+0.0529,0
+K,1003,0.23+0.22,-0.16+0.05+1,-0.2
+Larc,1001,1002,1003,4.66
+
+vsel,none
+WPROTA, , ,-90
+WPOFFS, , -0.16+0.05,-0.7
+PCIRC,0.064/2
+Vdrag,405,,,,,,1135
+cm,ZXG1,volume
+Vsymm,x,ZXG1
+cm,ZXG,volume
+
+
+
+
+
+

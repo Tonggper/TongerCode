@@ -1,0 +1,6 @@
+*cfopen,C:\Users\MrV\Desktop\class3\F-x_solid.txt
+*vwrite,'UY','Force'
+(a6,a6)
+*vwrite,Displace(1,1),Force(1,1)
+(f8.3,5x,f8.0)
+*cfclos
