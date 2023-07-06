@@ -1,0 +1,21 @@
+/post26
+!8#边墩
+nsol,2,7016,u,x     !
+nsol,3,7016,u,y     !
+nsol,4,7016,u,z     !
+! plvar,2,3,4        !画图
+! lines,10000
+! prvar,2,3,4
+
+
+outFileName='TimeResults'     ! 指定.txt文件名
+
+*CFOPEN,outFileName,'txt'                ! 打开文件LoadCase1BoltResults.txt
+
+*VWRITE,
+('  LoadCaseNum    BoltNum    N (kN)    M (kN·m)    SigmaN (N/mm^2)    SigmaM (N/mm^2)    Sigma (N/mm^2)    Tau (N/mm^2)    EqvStress (N/mm^2)  ')
+
+*VWRITE,2,3,4
+(F9.1,F13.1, F12.2)
+
+*CFCLOS  

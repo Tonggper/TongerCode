@@ -3,22 +3,38 @@ finish
 /prep7
 
 ! 定义单元与材料特性
-et, 1, solid45
+et, 1, solid45 !实体单元，模拟T梁、螺栓、螺母、钢板、钢绞线
 et, 2, conta173
 et, 3, targe170
+!钢板材料特性
 mp, ex, 1, 2.1e11
+mp, dens, 1, 7850
 mp, prxy, 1, 0.3
 tb, bkin, 1
 tbdata, 1, 2.35e8
 tbplot
 
+!接触对特性
 mp, mu, 2, 0.2
 
+!螺栓、螺母材料特性
 mp, ex, 3, 2.1e11
+mp, dens, 3, 7850
 mp, prxy, 3, 0.3
 tb, bkin, 3
 tbdata, 1, 9e8
 tbplot
+
+!T梁材料特性，T梁采用C45混凝土
+mp, ex, 4, 3.35e10
+mp, dens, 4, 2600
+mp, prxy, 4, 0.3
+
+
+!钢绞线材料特性，钢绞线采用标准强度1860MPa
+mp, ex, 5, 1.95e11
+mp, dens, 5, 7850
+mp, prxy, 5, 0.3
 
 ! 建立T梁
 K, 1, 0.23, 0, 0
@@ -199,6 +215,27 @@ cm,ZXG1,volume
 Vsymm,x,ZXG1
 cm,ZXG,volume
 
+
+!属性分配、网格划分
+Wpcsys,-1
+WPROTA, , -90,
+Vsel,s,loc,x,0
+wpoffs, , ,0.2
+vsbw,all
+wpoffs, , ,0.2
+vsbw,all
+WPROTA, , ,-90
+vsbw,all
+wpoffs, , ,0.08-0.012
+vsbw,all
+wpoffs, , ,(0.08-0.012)*(-2)
+vsbw,all
+
+
+
+allsel,all
+vatt,1,,1
+vsweep,all
 
 
 
