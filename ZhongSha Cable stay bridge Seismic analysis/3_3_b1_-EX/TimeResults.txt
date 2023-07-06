@@ -1,0 +1,2 @@
+  LoadCaseNum    BoltNum    N (kN)    M (kN¡¤m)    SigmaN (N/mm^2)    SigmaM (N/mm^2)    Sigma (N/mm^2)    Tau (N/mm^2)    EqvStress (N/mm^2)  
+      2.0          3.0        4.00

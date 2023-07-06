@@ -1,0 +1,5 @@
+*vread,acey(1,1),elcy,txt,,1
+(e16.6)
+*vread,acey(1,0),time,txt,,1
+(e17.6)
+acey(0,1)=1
