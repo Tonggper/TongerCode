@@ -6,6 +6,7 @@ finish
 et, 1, solid45 !实体单元，模拟T梁、螺栓、螺母、钢板、钢绞线
 et, 2, conta173
 et, 3, targe170
+!钢板材料特性
 ! 钢板材料特性
 mp, ex, 1, 2.1e11
 mp, dens, 1, 7850
@@ -35,6 +36,7 @@ mp, prxy, 4, 0.3
 mp, ex, 5, 1.95e11
 mp, dens, 5, 7850
 mp, prxy, 5, 0.3
+
 
 ! 建立T梁
 K, 1, 0.23, 0, 0
@@ -89,6 +91,9 @@ VGEN, 5, G_jiajingban1, , , , ,-0.15
 cm,G_jiajingban,volume
 
 
+
+
+
 ! 建立梁底从下往上第一排高强螺栓
 vsel,none
 WPROTA, , ,90
@@ -119,6 +124,7 @@ cm, LuoShuan, volume
 
 allsel,all
 vsbv, G_ce, LuoShuan !布尔减运算形成螺栓孔
+
 
 ! 建立梁底从下往上第三排高强螺栓
 vsel,none
@@ -156,15 +162,6 @@ cm,LuoShuan31,volume
 Vsymm,x,LuoShuan31
 cm,LuoShuan311,volume
 
-
-allsel
-Vsel,u,loc,x,0
-Vsel,u, , ,LuoShuan11
-Vsel,u, , ,LuoShuan21
-Vsel,u, , ,LuoShuan311
-cm,ZXK1,volume
-Vsymm,x,ZXK1
-cm,ZXK,volume
 
 !生成螺母
 !从下往上第一层
@@ -210,10 +207,24 @@ vsel,none
 WPROTA, , ,-90
 WPOFFS, , -0.16+0.05,-0.7
 PCIRC,0.064/2
-Vdrag,405,,,,,,1135
+Vdrag,332,,,,,,958
 cm,ZXG1,volume
-Vsymm,x,ZXG1
-cm,ZXG,volume
+
+allsel
+vsbv, G_jiajingban, ZXG1,,,keep
+
+allsel
+Vsel,u,loc,x,0
+Vsel,u, , ,LuoShuan11
+Vsel,u, , ,LuoShuan21
+Vsel,u, , ,LuoShuan311
+Vsel,u, , ,Luomu111
+Vsel,u, , ,Luomu211
+Vsel,u, , ,Luomu311
+cm,ZXK1,volume
+Vsymm,x,ZXK1
+cm,ZXK,volume
+
 
 
 !切分T梁
@@ -231,19 +242,42 @@ vsbw,all
 wpoffs, , ,(0.08-0.012)*(-2)
 vsbw,all
 
+
+Wpcsys,-1
+wpoffs, , ,-0.05
+vsbw,all
+*do,i,1,12
+wpoffs, , ,-0.15
+vsbw,all
+*enddo
+Vptn,all
+cm,Tbeam,volume
+
+
 !创建面切分T梁内部
 nummrg, all
-vsel,none
+Asel,none
 L, 81, 119
-Adrag,126,127,128,129,,,11
+Adrag,126,127,128,129,,,57
+cm,yuanzhumian1,area
+AGEN, 4, yuanzhumian1, , , , ,-0.15
+cm,yuanzhumian,area
+allsel,all
+VSBA,Tbeam,yuanzhumian
 
 
 
 
+
+lsel,s,length,,3.1415926*0.032
 !属性分配、网格划分
 allsel,all
 Vptn,all
 vatt,1,,1
+vsweep,all
+
+allsel,all
+esize,,15
 vsweep,all
 
 
